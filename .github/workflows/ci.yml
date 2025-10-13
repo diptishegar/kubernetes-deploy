@@ -23,7 +23,7 @@ jobs:
       - name: Attempt to pull existing :latest (may fail on first run)
         id: pull_latest
         run: |
-          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/flask-k8s-demo:latest
+          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/kubernetes-deploy:latest
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
           if docker pull "$IMAGE"; then
             echo "pulled=true" >> $GITHUB_ENV
@@ -34,7 +34,7 @@ jobs:
       - name: Retag previous latest as old-TIMESTAMP (if pulled)
         if: env.pulled == 'true'
         run: |
-          OLD_TAG=${{ secrets.DOCKERHUB_USERNAME }}/flask-k8s-demo:old-${TIMESTAMP}
+          OLD_TAG=${{ secrets.DOCKERHUB_USERNAME }}/kubernetes-deploy:old-${TIMESTAMP}
           docker tag $IMAGE $OLD_TAG
           docker push $OLD_TAG
           echo "Retagged previous latest -> $OLD_TAG"
@@ -46,8 +46,8 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: ./Dockerfile
+          file: ./Docker/Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/flask-k8s-demo:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/flask-k8s-demo:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/kubernetes-deploy:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/kubernetes-deploy:${{ github.sha }}
