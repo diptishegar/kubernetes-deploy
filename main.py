@@ -1,13 +1,11 @@
 from flask import Flask
 
-# Create an instance of the Flask class
 app = Flask(__name__)
 
-# Define a route for the root URL ("/")
 @app.route("/")
-def hello_world():
-    return "This is a sample K8 Deployment Web-Page!!"
+def home():
+    return "Kubernetes Deployment using terraform and Github Actions!!!"
 
-# Run the application if this script is executed directly
+# Start the web server
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
