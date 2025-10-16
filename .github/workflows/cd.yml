@@ -1,14 +1,19 @@
 name: Deploy latest pushed image to EKS
 
 on:
-  repository_dispatch:
-    types: [deploy]
+  workflow_run:
+    workflows: ["Build, archive previous latest, and push Docker image"]
+    types:
+      - completed
+    branches:
+      - main
 
 jobs:
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
-      id-token: write # Required for OIDC
+      id-token: write #
       contents: read
     steps:
       - name: Checkout code
@@ -22,17 +27,10 @@ jobs:
 
       - name: Get EKS credentials
         run: |
-          aws eks update-kubeconfig --name kube-cluster --region ${{ secrets.AWS_REGION }}
-
-      - name: Get image tag from payload
-        id: get_image_tag
-        run: |
-          IMAGE_TAG=$(jq --raw-output .client_payload.image_tag <<< "$PAYLOAD")
-          echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
-        env:
-          PAYLOAD: ${{ toJSON(github.event) }}
+          aws eks update-kubeconfig --name <YOUR_EKS_CLUSTER_NAME> --region ${{ secrets.AWS_REGION }}
 
       - name: Deploy to EKS
         run: |
-          sed -i "s|<IMAGE_PLACEHOLDER>|${{ env.IMAGE_TAG }}|g" manifests/deployment.yml
-          kubectl apply -f manifests/deployment.yml
+          # Use the correct relative path to deployment.yaml
+          sed -i "s|<IMAGE_PLACEHOLDER>|${{ secrets.DOCKERHUB_USERNAME }}/kubernetes-deploy:latest|g" manifests/deployment.yaml
+          kubectl apply -f manifests/deployment.yaml

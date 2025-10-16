@@ -53,11 +53,3 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/kubernetes-deploy:latest
-
-      - name: Trigger CD the pipeline
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.REPO_ACCESS_TOKEN }}
-          repository: ${{ github.repository }}
-          event-type: deploy
-          client-payload: '{"image_tag": "${{ secrets.DOCKERHUB_USERNAME }}/kubernetes-deploy:latest"}'
