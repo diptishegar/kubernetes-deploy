@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return "Kubernetes Deployment using terraform and Github Actions!!!"
+    return "Kubernetes Deployment using terraform & Github Actions :)"
 
 # Start the web server
 if __name__ == "__main__":

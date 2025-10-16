@@ -54,7 +54,7 @@ jobs:
       - name: Trigger CD the pipeline
         uses: peter-evans/repository-dispatch@v3
         with:
-          token: ${{ secrets.REPO_ACCESS_TOKEN }} # Update with your PAT
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
           repository: ${{ github.repository }}
           event-type: deploy
           client-payload: '{"image_tag": "${{ secrets.DOCKERHUB_USERNAME }}/kubernetes-deploy:latest"}'
